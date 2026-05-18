@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<title>Birthday Surprise 💖</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Jost:wght@200;300;400&display=swap" rel="stylesheet"/>
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+:root{
+  --pink:#ff4f87;
+  --pink-light:#ff8fb1;
+  --pink-soft:#ffd6e3;
+  --dark:#140608;
+}
+
+html,body{
+  width:100%;
+  min-height:100%;
+  overflow-x:hidden;
+  font-family:'Jost',sans-serif;
+  background:linear-gradient(135deg,#140608,#2b0d18,#140608);
+  color:white;
+}
+
+/* BACKGROUND */
+#canvas{
+  position:fixed;
+  inset:0;
+  z-index:0;
+}
+
+/* LOCK PAGE */
+#lockPage{
+  position:relative;
+  z-index:2;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  padding:30px;
+}
+
+.eyebrow{
+  letter-spacing:5px;
+  text-transform:uppercase;
+  font-size:12px;
+  color:var(--pink-light);
+  margin-bottom:30px;
+}
+
+.lock-ring{
+  width:110px;
+  height:110px;
+  border-radius:50%;
+  border:2px solid rgba(255,79,135,.4);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  margin-bottom:40px;
+  animation:pulse 3s infinite;
+}
+
+.lock-ring svg{
+  width:42px;
+  height:42px;
+  stroke:var(--pink-light);
+  fill:none;
+  stroke-width:1.5;
+}
+
+@keyframes pulse{
+  0%{
+    box-shadow:0 0 0 0 rgba(255,79,135,.4);
+  }
+  70%{
+    box-shadow:0 0 0 30px rgba(255,79,135,0);
+  }
+  100%{
+    box-shadow:0 0 0 0 rgba(255,79,135,0);
+  }
+}
+
+.lock-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(45px,8vw,80px);
+  line-height:1.1;
+  font-weight:300;
+  margin-bottom:16px;
+}
+
+.lock-title em{
+  color:var(--pink-light);
+  font-style:italic;
+}
+
+.lock-sub{
+  color:rgba(255,255,255,.5);
+  margin-bottom:45px;
+  letter-spacing:1px;
+}
+
+.input-wrap input{
+  width:280px;
+  padding:16px 24px;
+  border-radius:50px;
+  border:1px solid rgba(255,79,135,.4);
+  background:rgba(255,255,255,.05);
+  color:white;
+  text-align:center;
+  font-size:18px;
+  letter-spacing:3px;
+  outline:none;
+}
+
+.input-wrap input:focus{
+  border-color:var(--pink);
+}
+
+.unlock-btn{
+  margin-top:24px;
+  border:none;
+  padding:14px 40px;
+  border-radius:50px;
+  background:var(--pink);
+  color:white;
+  cursor:pointer;
+  letter-spacing:3px;
+  text-transform:uppercase;
+  transition:.3s;
+}
+
+.unlock-btn:hover{
+  background:#ff2f73;
+  transform:translateY(-2px);
+}
+
+.wrong-msg{
+  margin-top:18px;
+  color:var(--pink-light);
+  opacity:0;
+  transition:.3s;
+}
+
+/* REVEAL PAGE */
+#revealPage{
+  display:none;
+  position:relative;
+  z-index:2;
+}
+
+.reveal-hero{
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  padding:50px 20px;
+}
+
+.reveal-eyebrow{
+  letter-spacing:6px;
+  text-transform:uppercase;
+  font-size:12px;
+  color:var(--pink-light);
+  margin-bottom:25px;
+}
+
+.reveal-headline{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(50px,10vw,95px);
+  line-height:1.05;
+  font-weight:300;
+}
+
+.reveal-headline em{
+  color:var(--pink-light);
+  font-style:italic;
+}
+
+.reveal-date{
+  margin-top:20px;
+  color:rgba(255,255,255,.45);
+  letter-spacing:3px;
+}
+
+/* PHOTO */
+.photo-frame{
+  width:230px;
+  height:230px;
+  margin-top:40px;
+  padding:6px;
+  border-radius:50%;
+  background:linear-gradient(
+    135deg,
+    #ff4f87,
+    #ff8fb1,
+    #ffd6e3
+  );
+  box-shadow:
+    0 0 30px rgba(255,79,135,.45),
+    0 0 70px rgba(255,79,135,.2);
+
+  animation:floatPhoto 4s ease-in-out infinite;
+}
+
+.photo-frame img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  border-radius:50%;
+  border:4px solid #140608;
+}
+
+@keyframes floatPhoto{
+  0%{
+    transform:translateY(0px);
+  }
+  50%{
+    transform:translateY(-12px);
+  }
+  100%{
+    transform:translateY(0px);
+  }
+}
+
+/* MESSAGE */
+.message-box{
+  max-width:650px;
+  margin-top:50px;
+  padding:40px;
+  border-radius:30px;
+  background:rgba(255,79,135,.08);
+  border:1px solid rgba(255,79,135,.2);
+  backdrop-filter:blur(10px);
+}
+
+.message-box p{
+  font-family:'Cormorant Garamond',serif;
+  font-size:30px;
+  line-height:1.7;
+  font-style:italic;
+}
+
+.sig{
+  display:block;
+  margin-top:25px;
+  font-size:13px;
+  letter-spacing:2px;
+  color:var(--pink-light);
+  font-style:normal;
+}
+
+/* BUTTONS */
+.reveal-actions{
+  margin-top:40px;
+}
+
+.btn-outline{
+  background:transparent;
+  border:1px solid rgba(255,255,255,.3);
+  color:white;
+  padding:14px 30px;
+  border-radius:50px;
+  cursor:pointer;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  transition:.3s;
+}
+
+.btn-outline:hover{
+  border-color:var(--pink);
+  color:var(--pink-light);
+}
+
+/* FLOATING HEARTS */
+.heart{
+  position:fixed;
+  color:rgba(255,143,177,.5);
+  animation:float linear infinite;
+  z-index:1;
+}
+
+@keyframes float{
+  from{
+    transform:translateY(110vh) rotate(0deg);
+    opacity:0;
+  }
+
+  10%{
+    opacity:1;
+  }
+
+  to{
+    transform:translateY(-10vh) rotate(360deg);
+    opacity:0;
+  }
+}
+
+/* CONFETTI */
+.confetti{
+  position:fixed;
+  width:10px;
+  height:10px;
+  z-index:100;
+  animation:fall linear forwards;
+}
+
+@keyframes fall{
+  from{
+    transform:translateY(-100px) rotate(0deg);
+    opacity:1;
+  }
+
+  to{
+    transform:translateY(110vh) rotate(720deg);
+    opacity:0;
+  }
+}
+
+@media(max-width:600px){
+
+  .message-box{
+    padding:25px;
+  }
+
+  .message-box p{
+    font-size:22px;
+  }
+
+  .photo-frame{
+    width:190px;
+    height:190px;
+  }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<canvas id="canvas"></canvas>
+
+<!-- LOCK PAGE -->
+<div id="lockPage">
+
+  <p class="eyebrow">
+    A SPECIAL SURPRISE FOR YOU
+  </p>
+
+  <div class="lock-ring">
+
+    <svg viewBox="0 0 24 24">
+      <rect x="3" y="11" width="18" height="11" rx="2"/>
+      <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+    </svg>
+
+  </div>
+
+  <h1 class="lock-title">
+    A surprise is <br>
+    <em>waiting for you</em>
+  </h1>
+
+  <p class="lock-sub">
+    Enter the secret word to open it
+  </p>
+
+  <div class="input-wrap">
+    <input
+      id="secretInput"
+      type="text"
+      placeholder="secret word..."
+    >
+  </div>
+
+  <button class="unlock-btn" onclick="tryUnlock()">
+    Open My Surprise
+  </button>
+
+  <p class="wrong-msg" id="wrongMsg">
+    Wrong secret word 💔
+  </p>
+
+</div>
+
+<!-- REVEAL PAGE -->
+<div id="revealPage">
+
+  <div class="reveal-hero">
+
+    <p class="reveal-eyebrow">
+      HAPPY BIRTHDAY BSD B
+    </p>
+
+    <h1 class="reveal-headline">
+      To my <em>love,</em>
+    </h1>
+
+    <h1
+      class="reveal-headline"
+      style="font-size:clamp(35px,6vw,60px);margin-top:10px;"
+    >
+      today is all about you 💖
+    </h1>
+
+    <p class="reveal-date">
+      May 25, 2026
+    </p>
+
+    <!-- PHOTO -->
+    <div class="photo-frame">
+      <img src="https://scontent.fpnh18-3.fna.fbcdn.net/v/t39.30808-6/686035602_1694326805085612_1968269527774693184_n.jpg?stp=cp6_dst-jpg_tt6&_nc_cat=106&ccb=1-7&_nc_sid=833d8c&_nc_ohc=hABOiqgXJusQ7kNvwHjXz5D&_nc_oc=Adpor4xaZegzjtUXojwWdgNYysffzQ0qG3kfb11zzQrqE4Dskb7P1pUB7xWjBrlsJIE&_nc_zt=23&_nc_ht=scontent.fpnh18-3.fna&_nc_gid=p_qi47BOEIPJ2_hAbyrQAQ&_nc_ss=7b289&oh=00_Af69aUuP4ZQ0vYtUzrmt0LCcPdDSm7mXUtmSZI3nsUdc6w&oe=6A10C044" alt="Her Photo">
+    </div>
+
+    <!-- MESSAGE -->
+    <div class="message-box">
+
+      <p>
+        Every day with you feels magical.
+        Your smile brightens my darkest days,
+        and your love makes my world complete.
+
+        I’m so lucky to have you in my life.
+        Happy Birthday my princess 💕
+
+        <span class="sig">
+          — Always yours, O Meas
+        </span>
+      </p>
+
+    </div>
+
+    <!-- BUTTON -->
+    <div class="reveal-actions">
+
+      <button
+        class="btn-outline"
+        onclick="replayConfetti()"
+      >
+        Celebrate Again 🎉
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+
+/* SECRET WORD */
+let secretWord = "ROEUNMEAS";
+
+/* CANVAS BACKGROUND */
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+
+let w,h;
+
+function resize(){
+  w = canvas.width = window.innerWidth;
+  h = canvas.height = window.innerHeight;
+}
+
+resize();
+
+window.addEventListener('resize',resize);
+
+const circles = Array.from({length:6},()=>({
+  x:Math.random()*innerWidth,
+  y:Math.random()*innerHeight,
+  r:200+Math.random()*250,
+  dx:(Math.random()-.5)*0.4,
+  dy:(Math.random()-.5)*0.4
+}));
+
+function animate(){
+
+  ctx.clearRect(0,0,w,h);
+
+  circles.forEach(c=>{
+
+    c.x += c.dx;
+    c.y += c.dy;
+
+    if(c.x < -c.r) c.x = w + c.r;
+    if(c.x > w + c.r) c.x = -c.r;
+
+    if(c.y < -c.r) c.y = h + c.r;
+    if(c.y > h + c.r) c.y = -c.r;
+
+    const g = ctx.createRadialGradient(
+      c.x,c.y,0,
+      c.x,c.y,c.r
+    );
+
+    g.addColorStop(0,'rgba(255,79,135,.15)');
+    g.addColorStop(1,'transparent');
+
+    ctx.fillStyle = g;
+
+    ctx.beginPath();
+    ctx.arc(c.x,c.y,c.r,0,Math.PI*2);
+    ctx.fill();
+
+  });
+
+  requestAnimationFrame(animate);
+}
+
+animate();
+
+/* FLOATING HEARTS */
+for(let i=0;i<20;i++){
+
+  const heart = document.createElement('div');
+
+  heart.className = 'heart';
+  heart.innerHTML = '❤';
+
+  heart.style.left = Math.random()*100 + '%';
+
+  heart.style.fontSize =
+    (12 + Math.random()*22) + 'px';
+
+  heart.style.animationDuration =
+    (8 + Math.random()*10) + 's';
+
+  heart.style.animationDelay =
+    Math.random()*10 + 's';
+
+  document.body.appendChild(heart);
+}
+
+/* ENTER KEY */
+document
+.getElementById('secretInput')
+.addEventListener('keydown',e=>{
+
+  if(e.key === 'Enter'){
+    tryUnlock();
+  }
+
+});
+
+/* UNLOCK */
+function tryUnlock(){
+
+  const value =
+    document
+    .getElementById('secretInput')
+    .value
+    .trim()
+    .toLowerCase();
+
+  if(value === secretWord.toLowerCase()){
+
+    document.getElementById('lockPage').style.display='none';
+
+    document.getElementById('revealPage').style.display='block';
+
+    launchConfetti();
+
+    setTimeout(launchConfetti,700);
+
+  }else{
+
+    const msg =
+      document.getElementById('wrongMsg');
+
+    msg.style.opacity='1';
+
+    setTimeout(()=>{
+      msg.style.opacity='0';
+    },2000);
+
+  }
+}
+
+/* CONFETTI */
+const colors = [
+  '#ff4f87',
+  '#ff8fb1',
+  '#ffd6e3',
+  '#ffffff'
+];
+
+function launchConfetti(){
+
+  for(let i=0;i<80;i++){
+
+    const c = document.createElement('div');
+
+    c.className='confetti';
+
+    c.style.left =
+      Math.random()*100 + '%';
+
+    c.style.top='-20px';
+
+    const size = 6 + Math.random()*10;
+
+    c.style.width=size+'px';
+    c.style.height=size+'px';
+
+    c.style.background =
+      colors[
+        Math.floor(Math.random()*colors.length)
+      ];
+
+    c.style.borderRadius =
+      Math.random()>.5 ? '50%' : '2px';
+
+    c.style.animationDuration =
+      (2 + Math.random()*3) + 's';
+
+    document.body.appendChild(c);
+
+    setTimeout(()=>{
+      c.remove();
+    },5000);
+
+  }
+}
+
+function replayConfetti(){
+  launchConfetti();
+}
+
+</script>
+
+</body>
+</html>
